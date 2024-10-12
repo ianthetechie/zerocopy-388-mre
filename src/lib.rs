@@ -18,10 +18,25 @@ pub enum IntBackedEnum {
 
 #[derive(TryFromBytes)]
 #[bitfield(u8)]
-struct MyBitfield {
+struct BitfieldWithEnum {
     // We're bit packing and only care about 6 bits!
     #[bits(6)]
     enum_value: IntBackedEnum,
+    #[bits(2)]
+    other_field: u8,
+}
+
+// And here's a second example of breakage.
+// If you derive TryFromBytes before the bitfield macro,
+// compilation fails.
+// It works when you flip the order (bitfield macro first).
+
+#[derive(TryFromBytes)]
+#[bitfield(u8)]
+struct BitfieldWithInteger {
+    // We're bit packing and only care about 6 bits!
+    #[bits(6)]
+    enum_value: u8,
     #[bits(2)]
     other_field: u8,
 }
