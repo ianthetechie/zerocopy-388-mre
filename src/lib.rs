@@ -13,8 +13,24 @@ pub enum IntBackedEnum {
     VariantC = 26,
 }
 
-// The trouble seems to come when we further use bitfield-struct
-// to shove this into a packed field.
+impl IntBackedEnum {
+    const fn into_bits(self) -> u8 {
+        self as _
+    }
+    const fn from_bits(value: u8) -> Self {
+        match value {
+            0 => Self::VariantA,
+            1 => Self::VariantB,
+            26 => Self::VariantC,
+            _ => panic!("As far as I can tell, this crate doesn't support failable ops.")
+        }
+    }
+}
+
+// I thought that there was an issue idiosyncratic to repr(<some int>)
+// but that turned out to not be the case...
+// Only the ordering of the macros matters.
+// Flip them to get it compiling.
 
 #[derive(TryFromBytes)]
 #[bitfield(u8)]
